@@ -1,0 +1,55 @@
+CREATE TABLE Student (
+  Roll INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Address VARCHAR(100)
+);
+
+CREATE TABLE Subject (
+  sub_code VARCHAR(10) PRIMARY KEY,
+  sub_name VARCHAR(50)
+);
+
+CREATE TABLE Marks (
+  Roll INT,
+  sub_code VARCHAR(10),
+  marks INT,
+  FOREIGN KEY (Roll) REFERENCES Student(Roll),
+  FOREIGN KEY (sub_code) REFERENCES Subject(sub_code)
+);
+
+-- Student Table
+INSERT INTO Student VALUES (1, 'Pratik', 'Pune');
+INSERT INTO Student VALUES (2, 'Omkar', 'Mumbai');
+INSERT INTO Student VALUES (3, 'Ravi', 'Nashik');
+INSERT INTO Student VALUES (4, 'Amit', 'Nagpur');
+INSERT INTO Student VALUES (5, 'Sneha', 'Kolhapur');
+
+-- Subject Table
+INSERT INTO Subject VALUES ('DBMS', 'Database Management System');
+INSERT INTO Subject VALUES ('DMS', 'Discrete Mathematics');
+INSERT INTO Subject VALUES ('SPOS', 'System Programming and OS');
+INSERT INTO Subject VALUES ('CN', 'Computer Networks');
+INSERT INTO Subject VALUES ('SE', 'Software Engineering');
+
+-- Marks Table
+INSERT INTO Marks VALUES (1, 'DBMS', 82);
+INSERT INTO Marks VALUES (2, 'DMS', 68);
+INSERT INTO Marks VALUES (3, 'SPOS', 90);
+INSERT INTO Marks VALUES (4, 'CN', 74);
+INSERT INTO Marks VALUES (5, 'SE', 88);
+
+UPDATE Marks
+SET marks = 80
+WHERE sub_code = 'DMS';
+
+SELECT s.Roll, s.Name, m.sub_code, m.marks
+FROM Student s
+JOIN Marks m ON s.Roll = m.Roll
+WHERE m.marks < 75;
+
+DELETE FROM Marks
+WHERE Roll = (SELECT Roll FROM Student WHERE Name = 'Pratik');
+
+DELETE FROM Student
+WHERE Name = 'Pratik';
+

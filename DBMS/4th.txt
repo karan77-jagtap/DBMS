@@ -1,0 +1,93 @@
+CREATE TABLE Salesman (
+    Salesman_id INT PRIMARY KEY,
+    Name VARCHAR(50),
+    City VARCHAR(50),
+    Commission DECIMAL(5,2)
+);
+
+CREATE TABLE Customer (
+    Customer_id INT PRIMARY KEY,
+    Customer_name VARCHAR(50),
+    City VARCHAR(50),
+    Grade INT,
+    Salesman_id INT,
+    FOREIGN KEY (Salesman_id) REFERENCES Salesman(Salesman_id)
+);
+
+CREATE TABLE Orders (
+    Ord_no INT PRIMARY KEY,
+    Purchase_amt DECIMAL(10,2),
+    Ord_date DATE,
+    Customer_id INT,
+    Salesman_id INT,
+    FOREIGN KEY (Customer_id) REFERENCES Customer(Customer_id),
+    FOREIGN KEY (Salesman_id) REFERENCES Salesman(Salesman_id)
+);
+
+INSERT INTO Salesman VALUES
+(101, 'Ravi', 'Mumbai', 0.15),
+(102, 'Amit', 'Delhi', 0.12),
+(103, 'Neha', 'Paris', 0.20);
+
+INSERT INTO Customer VALUES
+(201, 'Rahul', 'Mumbai', 200, 101),
+(202, 'Sneha', 'Pune', 150, 101),
+(203, 'John', 'Delhi', 300, 102),
+(204, 'Marie', 'Paris', 400, 103);
+
+INSERT INTO Orders VALUES
+(501, 2500.00, '2012-10-10', 201, 101),
+(502, 3200.00, '2012-10-10', 202, 101),
+(503, 5000.00, '2012-10-10', 203, 102),
+(504, 1800.00, '2012-10-11', 204, 103);
+
+SELECT c.Customer_name, s.Name AS Salesman
+FROM Customer c
+JOIN Salesman s ON c.Salesman_id = s.Salesman_id;
+
+SELECT o.Ord_no, c.Customer_name, s.Name AS Salesman, c.City AS CustomerCity, s.City AS SalesmanCity
+FROM Orders o
+JOIN Customer c ON o.Customer_id = c.Customer_id
+JOIN Salesman s ON o.Salesman_id = s.Salesman_id
+WHERE c.City <> s.City;
+
+SELECT *
+FROM Orders
+WHERE Ord_date = '2012-10-10'
+AND Purchase_amt > (
+    SELECT AVG(Purchase_amt)
+    FROM Orders
+    WHERE Ord_date = '2012-10-10'
+);
+
+SELECT o.Ord_no, o.Purchase_amt, s.Name AS Salesman, s.City
+FROM Orders o
+JOIN Salesman s ON o.Salesman_id = s.Salesman_id
+WHERE s.City = 'Paris';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

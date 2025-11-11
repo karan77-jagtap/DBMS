@@ -1,0 +1,263 @@
+Step 1: Setup & Connect Python to MySQL
+
+Make sure you have:
+
+MySQL server installed and running
+
+A database named testdb (or any name you prefer)
+
+Python installed with mysql-connector-python library
+
+If you haven’t installed the connector yet, run:
+
+
+
+pip install mysql-connector-python
+
+Step 2: Create table (run once)
+
+
+
+Create a script called create_table.py to create your table:
+
+import mysql.connector
+from mysql.connector import Error
+
+try:
+    connection = mysql.connector.connect(
+        host='localhost',
+        database='testdb',        # change if you use another db
+        user='root',
+        password='your_password'  # change to your password
+    )
+    
+    if connection.is_connected():
+        cursor = connection.cursor()
+        
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS employees (
+                emp_id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(50),
+                salary DECIMAL(10,2)
+            )
+        """)
+        print("Table 'employees' created successfully.")
+        
+except Error as e:
+    print("Error:", e)
+
+finally:
+    if connection.is_connected():
+        cursor.close()
+        connection.close()
+
+
+
+
+Run this script once:
+
+python create_table.py
+
+
+
+Step 3: Insert Operation
+
+Save this as insert_employee.py:
+
+
+
+import mysql.connector
+from mysql.connector import Error
+
+def insert_employee(name, salary):
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='testdb',
+            user='root',
+            password='your_password'
+        )
+        
+        if connection.is_connected():
+            cursor = connection.cursor()
+            sql = "INSERT INTO employees (name, salary) VALUES (%s, %s)"
+            cursor.execute(sql, (name, salary))
+            connection.commit()
+            print(f"Inserted employee: {name} with salary {salary}")
+
+    except Error as e:
+        print("Error:", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# Example usage:
+insert_employee("Alice", 60000)
+
+
+
+
+Run:
+
+python insert_employee.py
+
+
+
+Now check your MySQL table:
+
+SELECT * FROM employees;
+
+
+You should see Alice there.
+
+
+
+
+Step 4: Select (Read) Operation
+
+Save as select_employees.py:
+
+import mysql.connector
+from mysql.connector import Error
+
+def select_employees():
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='testdb',
+            user='root',
+            password='your_password'
+        )
+        
+        if connection.is_connected():
+            cursor = connection.cursor()
+            cursor.execute("SELECT emp_id, name, salary FROM employees")
+            rows = cursor.fetchall()
+            
+            print("Employees:")
+            for row in rows:
+                print(row)
+
+    except Error as e:
+        print("Error:", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# Example usage:
+select_employees()
+
+
+
+
+Run:
+
+python select_employees.py
+
+
+
+
+
+Step 5: Update Operation
+
+Save as update_employee.py:
+
+import mysql.connector
+from mysql.connector import Error
+
+def update_employee_salary(name, new_salary):
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='testdb',
+            user='root',
+            password='your_password'
+        )
+        
+        if connection.is_connected():
+            cursor = connection.cursor()
+            sql = "UPDATE employees SET salary = %s WHERE name = %s"
+            cursor.execute(sql, (new_salary, name))
+            connection.commit()
+            print(f"Updated salary for {name} to {new_salary}")
+
+    except Error as e:
+        print("Error:", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# Example usage:
+update_employee_salary("Alice", 65000)
+
+
+Run:
+
+python update_employee.py
+
+
+Then run select_employees.py to see the updated salary.
+
+
+
+Step 6: Delete Operation
+
+Save as delete_employee.py:
+
+import mysql.connector
+from mysql.connector import Error
+
+def delete_employee(name):
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='testdb',
+            user='root',
+            password='your_password'
+        )
+        
+        if connection.is_connected():
+            cursor = connection.cursor()
+            sql = "DELETE FROM employees WHERE name = %s"
+            cursor.execute(sql, (name,))
+            connection.commit()
+            print(f"Deleted employee: {name}")
+
+    except Error as e:
+        print("Error:", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+# Example usage:
+delete_employee("Alice")
+
+
+Run:
+
+python delete_employee.py
+
+
+Run select_employees.py again to verify deletion.
+
+
+
+
+
+
+
+Summary
+
+Run create_table.py once to create the table.
+
+Run insert_employee.py to add a record.
+
+Run select_employees.py to view records.
+
+Run update_employee.py to update a record.
+
+Run delete_employee.py to delete a record.
